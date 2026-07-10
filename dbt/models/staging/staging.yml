@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Clean customer staging model.
+    columns:
+      - name: customer_id
+        description: Unique customer identifier.
+        tests:
+          - not_null
+          - unique
+      - name: region
+        tests:
+          - accepted_values:
+              values: ['South', 'West', 'Northeast', 'Midwest']
+
+  - name: stg_agents
+    description: Clean agent staging model.
+    columns:
+      - name: agent_id
+        description: Unique agent identifier.
+        tests:
+          - not_null
+          - unique
+      - name: agent_tier
+        tests:
+          - accepted_values:
+              values: ['Bronze', 'Silver', 'Gold', 'Platinum']
+
+  - name: stg_policies
+    description: Clean policy staging model.
+    columns:
+      - name: policy_id
+        description: Unique policy identifier.
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: agent_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_agents')
+              field: agent_id
+      - name: policy_status
+        tests:
+          - accepted_values:
+              values: ['Active', 'Cancelled', 'Expired', 'Renewed']
+
+  - name: stg_premiums
+    description: Clean premium payment staging model.
+    columns:
+      - name: premium_id
+        description: Unique premium payment identifier.
+        tests:
+          - not_null
+          - unique
+      - name: policy_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_policies')
+              field: policy_id
+
+  - name: stg_claims
+    description: Clean claims staging model.
+    columns:
+      - name: claim_id
+        description: Unique claim identifier.
+        tests:
+          - not_null
+          - unique
+      - name: policy_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_policies')
+              field: policy_id
+
+  - name: stg_claim_adjustments
+    description: Clean claim adjustment staging model.
+    columns:
+      - name: adjustment_id
+        description: Unique claim adjustment identifier.
+        tests:
+          - not_null
+          - unique
+      - name: claim_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_claims')
+              field: claim_id
+      - name: adjustment_status
+        tests:
+          - accepted_values:
+              values: ['Approved', 'Pending', 'Rejected']

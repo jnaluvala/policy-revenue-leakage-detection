@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: insurance_raw
+    database: INSURANCE_RAW
+    schema: RAW
+    description: Raw insurance data loaded from CSV files into Snowflake.
+    tables:
+      - name: RAW_CUSTOMERS
+        description: Raw customer demographic and segmentation data.
+
+      - name: RAW_AGENTS
+        description: Raw insurance agent profile data.
+
+      - name: RAW_POLICIES
+        description: Raw insurance policy data including policy type, status, premium, and dates.
+
+      - name: RAW_PREMIUMS
+        description: Raw premium payment transaction data.
+
+      - name: RAW_CLAIMS
+        description: Raw claims transaction data.
+
+      - name: RAW_CLAIM_ADJUSTMENTS
+        description: Raw claim adjustment data used for claim leakage and audit analysis.

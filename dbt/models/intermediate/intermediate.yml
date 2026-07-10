@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: int_policy_premium_summary
+    description: Policy-level premium payment summary used for loss ratio and payment behavior analysis.
+    columns:
+      - name: policy_id
+        description: Unique policy identifier.
+        tests:
+          - not_null
+          - unique
+      - name: total_paid_premium
+        description: Total premium amount with payment status Paid.
+      - name: total_billed_premium
+        description: Total premium amount billed across all payment statuses.
+      - name: premium_payment_count
+        description: Number of premium payment records for the policy.
+      - name: problem_payment_count
+        description: Number of late or failed premium payments.
+
+  - name: int_policy_claim_summary
+    description: Policy-level claim summary used for claim count, claim severity, and paid claim analysis.
+    columns:
+      - name: policy_id
+        description: Unique policy identifier.
+        tests:
+          - not_null
+          - unique
+      - name: claim_count
+        description: Number of claims filed for the policy.
+      - name: total_claim_amount
+        description: Total claim amount filed for the policy.
+      - name: total_paid_claim_amount
+        description: Total claim amount paid for the policy.
+      - name: avg_paid_claim_amount
+        description: Average paid amount per claim for the policy.
+      - name: max_paid_claim_amount
+        description: Maximum paid claim amount for the policy.
+
+  - name: int_claim_leakage_flags
+    description: Claim-level model that adds leakage and risk flags to each claim.
+    columns:
+      - name: claim_id
+        description: Unique claim identifier.
+        tests:
+          - not_null
+          - unique
+      - name: policy_id
+        description: Policy associated with the claim.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_policies')
+              field: policy_id
+      - name: duplicate_claim_flag
+        description: Indicates possible duplicate claim based on policy, claim date, claim type, and claim amount.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: claim_after_policy_end_flag
+        description: Indicates whether the claim occurred after the policy end date.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: claim_without_premium_flag
+        description: Indicates whether a claim was paid for a policy with no paid premium.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: high_severity_claim_flag
+        description: Indicates whether the paid claim amount is greater than 25000.
+        tests:
+          - accepted_values:
+              values: [0, 1]

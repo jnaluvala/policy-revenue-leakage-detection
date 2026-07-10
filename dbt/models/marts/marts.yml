@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: mart_insurance_performance
+    description: Final BI-ready policy-level mart for insurance premium, claims, loss ratio, policy risk, agent performance, and customer segment reporting.
+    columns:
+      - name: policy_id
+        description: Unique policy identifier.
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Customer associated with the policy.
+        tests:
+          - not_null
+
+      - name: agent_id
+        description: Agent associated with the policy.
+        tests:
+          - not_null
+
+      - name: policy_type
+        description: Type of insurance policy.
+
+      - name: total_paid_premium
+        description: Total paid premium amount for the policy.
+
+      - name: total_paid_claim_amount
+        description: Total paid claim amount for the policy.
+
+      - name: loss_ratio
+        description: Total paid claim amount divided by total paid premium.
+
+      - name: claim_severity
+        description: Average paid claim amount per claim.
+
+      - name: has_claim
+        description: Indicates whether the policy has at least one claim.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: has_payment_issue
+        description: Indicates whether the policy has late or failed premium payments.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+  - name: mart_claims_leakage
+    description: Final BI-ready claim-level mart for claims leakage, duplicate claims, policy coverage issues, high-severity claims, claim adjustments, and risk score reporting.
+    columns:
+      - name: claim_id
+        description: Unique claim identifier.
+        tests:
+          - not_null
+          - unique
+
+      - name: policy_id
+        description: Policy associated with the claim.
+        tests:
+          - not_null
+
+      - name: duplicate_claim_flag
+        description: Indicates whether a claim appears to be duplicated.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: claim_after_policy_end_flag
+        description: Indicates whether claim date is after policy end date.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: claim_without_premium_flag
+        description: Indicates whether claim was paid when no premium had been collected.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: high_severity_claim_flag
+        description: Indicates whether paid claim amount is greater than 25000.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: leakage_risk_score
+        description: Weighted risk score based on claim leakage rules and claim adjustment behavior.
